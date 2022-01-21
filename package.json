@@ -15,8 +15,7 @@
 		"node": "14.13.0"
 	},
 	"repository": {
-		"type": "git",
-		"url": "https://hyperdev.com/#!/project/welcome-project"
+		"url": "git+https://github.com/zc2021/headerparser"
 	},
 	"keywords": [
 		"node",
