@@ -1,29 +1,32 @@
 require('dotenv').config();
-const express = require('express');
-const cors = require('cors');
+const development = process.env.NODE_ENV === 'development';
+const cluster = require('cluster');
 
-const app = express();
-const port = process.env.PORT || 3000;
-
-app.use(cors());
-
-app.use(express.static('public'));
-
-app.get('/', function (req, res) {
-  res.sendFile(__dirname + '/views/index.html');
-});
-
-app.get('/api/whoami', function(req, res) {
-  let address = req.ip;
-  let language = req.get('Accept-Language');
-  let software = req.get('User-Agent')
-  res.json({
-    ipaddress: address,
-    language: language,
-    software: software,
+if (cluster.isMaster) {
+  const workerPool = process.env.WEB_CONCURRENCY || 1;
+  for (let i=0; i < workerPool; i++) {
+    cluster.fork();
+  }
+  cluster.on('exit', function(worker) {
+    console.log(`Worker ${worker.id} died.`);
+    cluster.fork();
   });
-});
+} else {
+  const express = require('express');
+  const cors = require('cors');
+  
+  const app = express();
+  const port = process.env.PORT || 3000;
+  const appRouter = require(__dirname + '/route/endpoints');
 
-app.listen(port, function () {
-  console.log('Listening at: http://localhost:' + port);
-});
+  app.use(cors());
+
+  app.use(express.static('public'));
+  app.use(appRouter);
+
+  app.listen(port, function () {
+    if (development) {
+      console.log(`Worker ${cluster.worker.id} listening at: http://localhost:${port}`);
+    }
+  });
+}
