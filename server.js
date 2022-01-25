@@ -13,14 +13,15 @@ if (cluster.isMaster) {
   });
 } else {
   const express = require('express');
+  const helmet = require('helmet');
   const cors = require('cors');
   
   const app = express();
   const port = process.env.PORT || 3000;
   const appRouter = require(`${__dirname}/route/endpoints`);
 
+  app.use(helmet());
   app.use(cors());
-
   app.use(express.static('public'));
   app.use(appRouter);
 
