@@ -11,15 +11,18 @@ The main application server is located in `server.js`, which `require`s HTTP API
 
 Endpoint | Response
 -|-
-`/api/all` | `name : value` for all request headers
-`api/:headername` | `name : value` if header set[*]
+`/api/all` | `{ name : value }` for all request headers
+`api/:headername` | `{ name : value }` if header set<br>`{ error: message }` response on failure
 `api/whoami` | `{ ipaddress : value, language : accept-language, software : user-agent }`
 
-[*] `error: message` response on failure
+Relevant header values are temporarily stored in local constants per route and request. The body object is generated from stored values and sent with status code to the client via Express' native status and JSON handlers (`res.status(stat).json(body)`).
+
+All request-specific objects used by the router are scoped to the route callback function, and should be fully dereferenced/ready for collection once the response has been served.
+
 ## Stack
 Layer | Technology
 -|-
-Front End | HTML / CSS
+Front End | HTML / CSS (project boilerplate)
 Application Framework | Express
 Server | Node.js
 Database | N/A (none)
