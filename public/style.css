@@ -27,6 +27,20 @@ code {
   background-color: #fff;
 }
 
+table {
+	margin: 0 auto;
+}
+
+.left {
+	text-align: left;
+	border-right-style: hidden;
+}
+
+.right {
+	text-align: right;
+	border-left-style: hidden;
+}
+
 a {
 	color: #2574A9;
 }
