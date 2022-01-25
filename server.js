@@ -17,7 +17,7 @@ if (cluster.isMaster) {
   
   const app = express();
   const port = process.env.PORT || 3000;
-  const appRouter = require(__dirname + '/route/endpoints');
+  const appRouter = require(`${__dirname}/route/endpoints`);
 
   app.use(cors());
 
