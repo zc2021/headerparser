@@ -1,5 +1,5 @@
-require('dotenv').config();
-const development = process.env.NODE_ENV === 'development';
+const development = process.env.NODE_ENV !== 'production';
+if (development) require('dotenv').config();
 const cluster = require('cluster');
 
 if (cluster.isMaster) {
@@ -7,7 +7,7 @@ if (cluster.isMaster) {
   for (let i=0; i < workerPool; i++) {
     cluster.fork();
   }
-  cluster.on('exit', function(worker) {
+  cluster.on('exit', function(worker, _, signal) {
     console.log(`Worker ${worker.id} died.`);
     cluster.fork();
   });
@@ -24,6 +24,10 @@ if (cluster.isMaster) {
   app.use(cors());
   app.use(express.static('public'));
   app.use(appRouter);
+
+  app.get('/', function (_req, res) {
+    res.sendFile(__dirname + '/views/index.html');
+  });
 
   app.listen(port, function () {
     if (development) {
